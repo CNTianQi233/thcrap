@@ -1,133 +1,128 @@
-Touhou Community Reliant Automatic Patcher
-------------------------------------------
+# Touhou Community Reliant Automatic Patcher（thcrap）汉化版
 
 [![Join the chat at http://discord.thpatch.net](https://discordapp.com/api/guilds/213769640852193282/widget.png)](http://discord.thpatch.net/)
 [![Backers on Open Collective](https://opencollective.com/thpatch/backers/badge.svg)](#backers)
 [![Build status](https://ci.appveyor.com/api/projects/status/6mcjhegcnplaojd0?svg=true)](https://ci.appveyor.com/project/brliron/thcrap-dev)
 [![GitHub Release](https://img.shields.io/github/release/thpatch/thcrap.svg)](https://github.com/thpatch/thcrap/releases)
 
-## Description ##
+## 项目说明
 
-Basically, this is an almost-generic, easily expandable and customizable framework to patch Windows applications in memory, specifically tailored towards the translation of Japanese games.
+本项目是 thcrap（Touhou Community Reliant Automatic Patcher）的汉化分支。
 
-It is mainly developed to facilitate self-updating, multilingual translation of the [Touhou Project](http://en.wikipedia.org/wiki/Touhou_Project) games on [Touhou Patch Center](http://thpatch.net/), but can theoretically be used for just about any other patch for these games, without going through that site.
+thcrap 本质上是一个可扩展、可定制的 Windows 内存补丁框架，最初主要用于东方 Project（Touhou Project）相关游戏的翻译补丁加载与更新。
 
-### Main features of the base engine ###
+## 汉化版说明
 
-* Easy **DLL injection** of the main engine and plug-ins into the target process.
+- 作者：`TianQi233`
+- 哔哩哔哩：[`Instance_TianQi`](https://space.bilibili.com/457047949)
+- GitHub：[`CNTianQi233`](https://github.com/CNTianQi233)
 
-* **Full propagation to child processes**. This allows the usage of other third-party patches which also use DLL injection, together with thcrap. (Yes, this was developed mainly for vpatch.)
+### 免责声明
 
-* Uses **JSON for all patch configuration data**, making the patches themselves open-source by design. By recursively merging JSON objects, this gives us...
+本汉化版为非官方版本，与 thcrap 官方项目无隶属关系，仅供学习与交流使用。  
+因使用本版本导致的任何问题或损失，由使用者自行承担。
 
-* **Patch stacking** - apply any number of patches at the same time, sorted by a priority list. Supports wildcard-based blacklisting of files in certain patches through the run configuration.
+### 维护说明
 
-* Automatically adds **transparent Unicode filename support** via Win32 API wrappers to target processes using the Win32 ANSI functions, without the need for programs like [AppLocale](http://en.wikipedia.org/wiki/AppLocale).
+作者不会长期维护此版本，后续更新与支持不作保证。
 
-* Patches can support **multiple builds and versions** of a single program, identified by a combination of SHA-256 hashes and .EXE file sizes.
+## 本分支当前改动（摘要）
 
-* **Binary hacks** for arbitrary in-memory modifications of the original program (mostly used for custom assembly).
+- 配置工具界面汉化（含 `thcrap_configure_v3`）。
+- 在 `thcrap_configure_v3` 主界面增加“关于汉化版”入口。
+- 关闭“自动更新到新版本”检查逻辑（避免自动升级覆盖汉化版行为）。
 
-* **Breakpoints** to call custom DLL functions at any instruction of the original code. These functions can read and modify the current CPU register state.
+## 基础引擎主要特性
 
-* **Multiple sets** of sequentially applied binary hacks and breakpoints, for working around EXE packers and DRM schemes.
+- 通过 DLL 注入将主引擎与插件注入目标进程。
+- 支持对子进程的注入传播，便于与其他第三方补丁共存。
+- 配置与补丁数据使用 JSON，便于开源与协作。
+- 支持补丁堆栈（Patch Stacking），按优先级叠加多个补丁。
+- 通过 Win32 API 包装提供透明 Unicode 文件名支持。
+- 支持基于 SHA-256 和 EXE 大小识别不同程序版本。
+- 支持二进制内存修改（Binhack）与断点钩子（Breakpoint）。
+- 支持文件断点与按 JSON 描述的文件格式补丁处理。
 
- * **File breakpoints** to replace data files in memory with replacements from patches.
+## 模块组成
 
-* Wildcard-based **file format patching hooks** called on file replacements - can apply patches to data files according to a (stackable!) JSON description.
+- `win32_utf8`：Win32 UTF-8 包装层。
+- `thcrap`：主补丁引擎。
+- `thcrap_loader`：命令行加载器。
+- `thcrap_configure`：旧版配置向导。
+- `thcrap_configure_v3`：新版配置向导（C# WPF）。
+- `thcrap_tsa`：面向上海爱丽丝 STG 引擎的插件。
+- `thcrap_tasofro`：面向黄昏边境相关游戏的插件。
+- `thcrap_update`：补丁更新与自更新相关模块。
+- `thcrap_bgmmod`：BGM 相关辅助库。
 
-* Optional **Steam integration** for games that are available through Steam, but don't come with Steam integration themselves. Can be disabled by deleting `steam_api.dll`.
+## 编译环境（按当前分支）
 
-* ... and all that without any significant impact on performance. ☺
+建议使用 Visual Studio 2022，并安装以下组件：
 
-## Modules included ##
+1. `使用 C++ 的桌面开发`
+2. `MSVC v141 - VS 2017 C++ x64/x86 生成工具`
+3. `对 VS 2017 (v141) 工具的 C++ Windows XP 支持（v141_xp）`
+4. （用于 `thcrap_configure_v3`）.NET 桌面开发相关组件
 
-* `win32_utf8`: A UTF-8 wrapper library around the Win32 API calls we require. This is a stand-alone project and can (and should) be freely used in other applications, too.
-* `thcrap`: The main patch engine.
-* `thcrap_loader`: A command-line loader to call the injection functions of `thcrap` on a newly created process.
-* `thcrap_configure`: A GUI wizard for discovering patches, configuring patch stacks, and locating supported games.
-* `thcrap_tsa`: A thcrap plug-in containing patch hooks for games using the STG engine by Team Shanghai Alice.
-* `thcrap_tasofro`: A thcrap plug-in containing patch hooks for various games by [Twilight Frontier](http://tasofro.net/).
-* `thcrap_update`: Contains updating functionality for patches, digitally signed automatic updates of thcrap itself, as well as an updater GUI. `thcrap_update.dll` can be safely deleted to disable all online functionality.
-* `thcrap_bgmmod`: A helper library to handle the non-game-specific parts of BGM modding for originally uncompressed PCM music, like codec support and loop point handling. Currently statically linked into `thcrap_tsa` as this module is currently the only one with support for BGM modding, but already split into a separate library to be ready for covering more engines in the future.
+## 获取源码
 
-## Building ##
+```bash
+git clone --recursive https://github.com/thpatch/thcrap.git
+```
 
-A ready-made Visual Studio build configuration, covering all modules and their dependencies, is provided as part of this repository. To set up the build:
+如果你使用的是本汉化分支，请替换为你的仓库地址。
 
-* Install [Visual Studio Community 2019](https://visualstudio.microsoft.com/vs/older-downloads/).
-  * Visual Studio 2019 or newer is required to build thcrap_configure_v3. For all other components, [Visual Studio Community 2017](https://visualstudio.microsoft.com/vs/older-downloads/) will also work
-  * You can also use [Visual Studio Community 2022](https://visualstudio.microsoft.com/vs/). During installation, make sure to install the v141 and v141_xp toolsets (v141_xp is the Visual Studio 2017 compiler with Windows XP compatibility, and v141 is required by v141_xp).
-* Make sure that you've pulled all Git submodules together with this repo:
+## 编译方法
 
-		git clone --recursive https://github.com/thpatch/thcrap.git
+在仓库根目录（`thcrap.sln` 同级）执行：
 
-* (Optional) If your thcrap build should be able to automatically update itself, you need to create a code signing certificate. To do this, run the following commands on the Visual Studio command prompt (`vcvarsall.bat`) in the root directory of this repo (the one with `thcrap.sln`):
+### Win32 Release
 
-		makecert -n "CN=Your Name,E=yourmail@provider.net" -$ individual -a sha256 -len 4096 -r -cy authority -sky signature -pe -sv cert.pvk cert.cer
-		pvk2pfx -pvk cert.pvk -spc cert.cer -pfx cert.pfx
+```powershell
+msbuild thcrap.sln /t:Build /p:Configuration=Release /p:Platform=Win32 /m
+```
 
-	`cert.pfx` is used to sign the binaries as part of the build, so don't change the file name.
+### x64 Release
 
-Then, open `thcrap.sln`, choose Debug or Release from the drop-down menu in the toolbar (or the Configuration Manager) and run *Build → Build Solution* from the main menu.
+```powershell
+msbuild thcrap.sln /t:Build /p:Configuration=Release /p:Platform=x64 /m
+```
 
-You can also build from the command line by running the Visual Studio tool environment batch file (`vcvarsall.bat`), then run
+编译产物默认位于：
 
-		msbuild /m /p:Configuration=Debug
+- `bin/`
+- `bin/bin/`
 
-or
+## 打包发行版（当前仓库做法）
 
-		msbuild /m /p:Configuration=Release
+本仓库常见做法是按 `dist/thcrap_release_YYYY-MM-DD.zip` 的目录结构打包发布。  
+建议每次发布前：
 
-in the thcrap directory. The binaries will end up in the `bin/` subdirectory.
+1. 先完成 `Win32 + x64` 的 `Release` 编译。
+2. 确认 `bin/bin` 下关键文件已更新（如 `thcrap_update.dll`、`thcrap_update_64.dll`、`thcrap_configure_v3.exe`）。
+3. 生成发行目录和 zip 放入 `dist/`。
 
-### Signing a release archive for automatic updates ###
-First, convert `cert.pvk` to a .pem file using OpenSSL, then use this file together with `scripts/release_sign.py`:
+## 自动更新行为说明（汉化版）
 
-	openssl rsa -inform pvk -in cert.pvk -outform pem -out cert.pem
-	python release_sign.py -k cert.pem thcrap.zip
+当前汉化分支已关闭“自动检查并升级到新版本”的行为，避免运行时自动切回其他版本。  
+若你希望恢复官方逻辑，可自行回滚对应改动。
 
-### Using different compilers ###
+## 证书签名（可选）
 
-Visual Studio Community 2017 is recommended for building, and the build configuration references the Visual Studio 2017 platform toolset with Windows XP targeting support by default. However, the project should generally build under every version since Visual C++ 2010 Express after changing the `<PlatformToolset>` value in `Base.props`. For a list of all platform toolsets available on your system, open the `Properties` dialog for any included project and refer to the drop-down menu at *Configuration Properties → General → Platform Toolset*.
+如果你需要可验证签名的自动更新流程，需要自备证书并按官方流程签名。  
+本分支默认可在无 `cert.pfx` 情况下编译，但不会进行数字签名。
 
-Compilation with MinGW is currently not supported. This is not likely to change in the foreseeable future as we don't see much value in it.
+## 许可证
 
-### Dependencies ###
+上游 thcrap 及其附属模块默认采用 Public Domain（除非特定文件另有声明）。
 
-All required third-party libraries for the C/C++ code are included as Git submodules in the [thcrap_external_dependencies](https://github.com/thpatch/thcrap_external_dependencies) submodule, which also contains pre-built DLLs, .lib files, export definitions and PDBs. These are:
+## Backers
 
-* [Jansson](http://www.digip.org/jansson/), required for every module apart from `win32_utf8`.
-
-* [libpng](http://www.libpng.org/pub/png/libpng.html) **(>= 1.6.0)**, required by `thcrap_tsa` for image patching.
-
-* [zlib](http://zlib.net/), required by `thcrap_update` for CRC32 verification. It's required by `libpng` anyway, though.
-
-* `thcrap_bgmmod` currently supports the following codecs via third-party libraries:
-
-  * **FLAC** via [dr_flac](https://mackron.github.io/dr_flac.html)
-  * **Ogg Vorbis** via [libogg](https://xiph.org/ogg/), [libvorbis](https://xiph.org/vorbis/) and libvorbisfile
-  * **MP3** via [libmpg123](https://www.mpg123.de/)
-
-The scripts in the `scripts` directory are written in [Python 3](http://python.org/). Some of them require further third-party libraries not included in this repository:
-
-* [PyCryptodome](https://www.pycryptodome.org/) is required by `release_sign.py`.
-* [pathspec](https://pypi.python.org/pypi/pathspec) is required by `repo_update.py`. Can be easily installed via `pip`.
-
-## License ##
-
-The Touhou Community Reliant Patcher and all accompanying modules are released to the Public Domain, unless stated otherwise. This means you can do whatever you want with this code without so much as crediting us.
-
-That said, we *do* appreciate attribution. ☺
-
-## Backers ##
-
-Love our work? [Become a backer of Touhou Patch Center on Open Collective](https://opencollective.com/thpatch), and help us decide the priorities of thcrap's future development.
-
-Thank you to all our backers!
+支持上游项目可访问：  
+<https://opencollective.com/thpatch>
 
 <a href="https://opencollective.com/thpatch#backers" target="_blank"><img src="https://opencollective.com/thpatch/backers.svg?width=890&button=true"></a>
 
-## The team ##
+## Contributors
 
 <a href="https://github.com/thpatch/thcrap/graphs/contributors"><img src="https://opencollective.com/thpatch/contributors.svg?width=890&limit=5&button=false" /></a>
