@@ -2,7 +2,7 @@
 
 void printError(LPCWSTR path)
 {
-    LPCWSTR format = L"Could not run %s: %s";
+    LPCWSTR format = L"无法运行 %s：%s";
     LPWSTR lpMsgBuf;
     LPWSTR lpDisplayBuf;
     DWORD dw = GetLastError();
@@ -16,12 +16,12 @@ void printError(LPCWSTR path)
 
     lpDisplayBuf = my_alloc(my_wcslen(format) + my_wcslen(path) + my_wcslen(lpMsgBuf) + 1, sizeof(WCHAR));
 	LPWSTR ptr = lpDisplayBuf;
-	ptr = my_strcpy(ptr, L"Could not run ");
+	ptr = my_strcpy(ptr, L"无法运行 ");
 	ptr = my_strcpy(ptr, path);
-	ptr = my_strcpy(ptr, L": ");
+	ptr = my_strcpy(ptr, L"：");
 	ptr = my_strcpy(ptr, lpMsgBuf);
     //StringCchPrintf(lpDisplayBuf, LocalSize(lpDisplayBuf) / sizeof(WCHAR), format, path, lpMsgBuf);
-    MessageBox(NULL, lpDisplayBuf, L"Touhou Community Reliant Automatic Patcher", MB_OK);
+    MessageBox(NULL, lpDisplayBuf, L"thcrap", MB_OK);
 
     my_free(lpDisplayBuf);
     LocalFree(lpMsgBuf);

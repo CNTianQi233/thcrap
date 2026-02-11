@@ -65,7 +65,7 @@ namespace thcrap_configure_v3
 
                         var itemRemove = new MenuItem()
                         {
-                            Header = "Remove from this list",
+                            Header = "从列表中移除",
                         };
                         itemRemove.Click += RemoveFromList;
                         _contextMenu.Add(itemRemove);
@@ -118,7 +118,7 @@ namespace thcrap_configure_v3
                             if (stringdefs.TryGetValue(game_id, out value))
                                 name_ = value;
                             else if (game_id.EndsWith("_custom") && stringdefs.TryGetValue(game_id.Remove(game_id.Length - "_custom".Length), out value))
-                                name_ = value + " (configuration)";
+                                name_ = value + "（配置）";
                         }
                     }
 
@@ -283,7 +283,7 @@ namespace thcrap_configure_v3
             try {
                 File.WriteAllText("config/games.js", json);
             } catch(System.IO.IOException e) {
-                System.Windows.MessageBox.Show(String.Format("Failed to write games.js ({0})", e.Message), "Error");
+                System.Windows.MessageBox.Show(String.Format("写入 games.js 失败（{0}）", e.Message), "错误");
             }
         }
 

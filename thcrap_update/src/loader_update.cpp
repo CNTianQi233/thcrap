@@ -155,10 +155,10 @@ static LRESULT CALLBACK loader_update_proc(HWND hWnd, UINT uMsg, WPARAM wParam, 
 				DWORD len = GetCurrentDirectoryU(0, NULL);
 				VLA(char, current_directory, len);
 				GetCurrentDirectoryU(len, current_directory);
-				if (log_mboxf(NULL, MB_YESNO, "Do you really want to completely disable updates?\n\n"
-					"If you want to enable them again, you will need to run\n"
+				if (log_mboxf(NULL, MB_YESNO, "确定要彻底禁用更新吗？\n\n"
+					"如果之后想重新启用更新，需要运行：\n"
 					"%s\\thcrap_enable_updates.bat\n"
-					"(this file will be created after you click ok)",
+					"（点击“是”后会自动创建该文件）",
 					current_directory) == IDYES) {
 					MoveFileEx("bin\\thcrap_update" FILE_SUFFIX ".dll", "bin\\thcrap_update_disabled" FILE_SUFFIX ".dll", MOVEFILE_REPLACE_EXISTING);
 					static constexpr char bat_file[] =
@@ -172,7 +172,7 @@ static LRESULT CALLBACK loader_update_proc(HWND hWnd, UINT uMsg, WPARAM wParam, 
 						"pause\n"
 						"(goto) 2>nul & del \"%~f0\"\n";
 					file_write("thcrap_enable_updates.bat", bat_file, strlen(bat_file));
-					log_mbox(NULL, MB_OK, "Updates are now disabled.");
+					log_mbox(NULL, MB_OK, "更新已禁用。");
 					PostQuitMessage(0);
 				}
 				VLA_FREE(current_directory);
@@ -348,12 +348,12 @@ DWORD WINAPI loader_update_window_create_and_run(LPVOID param)
 	}
 
 	// Main window
-	state->hwnd[HWND_MAIN] = CreateWindowW(L"LoaderUpdateWindow", L"Touhou Community Reliant Automatic Patcher",
+	state->hwnd[HWND_MAIN] = CreateWindowW(L"LoaderUpdateWindow", L"thcrap",
 		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
 		CW_USEDEFAULT, 0, 500, 115, NULL, NULL, hMod, state);
 
 	// Update UI
-	state->hwnd[HWND_LABEL_STATUS] = CreateWindowW(L"Static", L"Checking for thcrap updates...", WS_CHILD | WS_VISIBLE,
+	state->hwnd[HWND_LABEL_STATUS] = CreateWindowW(L"Static", L"正在检查 thcrap 更新...", WS_CHILD | WS_VISIBLE,
 		5, 5, 480, 18, state->hwnd[HWND_MAIN], (HMENU)HWND_LABEL_STATUS, hMod, NULL);
 	state->hwnd[HWND_PROGRESS] = CreateWindowW(PROGRESS_CLASSW, L"", WS_CHILD | WS_VISIBLE,
 		5, 30, 480, 18, state->hwnd[HWND_MAIN], (HMENU)HWND_PROGRESS, hMod, NULL);
@@ -361,30 +361,30 @@ DWORD WINAPI loader_update_window_create_and_run(LPVOID param)
 	SetWindowSubclass(state->hwnd[HWND_PROGRESS], progress_bar_with_text_proc, 1, (DWORD_PTR)new ProgressBarWithText(L""));
 
 	// Buttons
-	state->hwnd[HWND_BUTTON_EXPAND_LOGS] = CreateWindowW(L"Button", L"Settings and logs...", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+	state->hwnd[HWND_BUTTON_EXPAND_LOGS] = CreateWindowW(L"Button", L"设置和日志...", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		5, 55, 153, 23, state->hwnd[HWND_MAIN], (HMENU)HWND_BUTTON_EXPAND_LOGS, hMod, NULL);
-	state->hwnd[HWND_BUTTON_UPDATE] = CreateWindowW(L"Button", L"Check for updates", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED,
+	state->hwnd[HWND_BUTTON_UPDATE] = CreateWindowW(L"Button", L"检查更新", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED,
 		168, 55, 153, 23, state->hwnd[HWND_MAIN], (HMENU)HWND_BUTTON_UPDATE, hMod, NULL);
-	state->hwnd[HWND_BUTTON_RUN] = CreateWindowW(L"Button", L"Run the game", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED,
+	state->hwnd[HWND_BUTTON_RUN] = CreateWindowW(L"Button", L"启动游戏", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED,
 		331, 55, 153, 23, state->hwnd[HWND_MAIN], (HMENU)HWND_BUTTON_RUN, hMod, NULL);
 
 	// Settings and logs
-	state->hwnd[HWND_CHECKBOX_UPDATE_AT_EXIT] = CreateWindowW(L"Button", L"Install updates after running the game (requires a restart)",
+	state->hwnd[HWND_CHECKBOX_UPDATE_AT_EXIT] = CreateWindowW(L"Button", L"游戏结束后安装更新（需要重启）",
 		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
 		5, 95, 480, 18, state->hwnd[HWND_MAIN], (HMENU)HWND_CHECKBOX_UPDATE_AT_EXIT, hMod, NULL);
 	if (state->update_at_exit) {
 		CheckDlgButton(state->hwnd[HWND_MAIN], HWND_CHECKBOX_UPDATE_AT_EXIT, BST_CHECKED);
 	}
 	state->hwnd[HWND_STATIC_UPDATE_AT_EXIT] = CreateWindowW(L"Static",
-		L"If it isn't checked, the updates are installed before running the game, ensuring it is fully up to date.", WS_CHILD | WS_VISIBLE,
+		L"若不勾选，将在启动游戏前安装更新，以确保游戏保持最新。", WS_CHILD | WS_VISIBLE,
 		5, 113, 480, 30, state->hwnd[HWND_MAIN], (HMENU)HWND_STATIC_UPDATE_AT_EXIT, hMod, NULL);
 	// If it isn't checked, the updates are installed before running the game, ensuring it is fully up to date.
-	state->hwnd[HWND_CHECKBOX_KEEP_UPDATER] = CreateWindowW(L"Button", L"Keep the updater running in background", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
+	state->hwnd[HWND_CHECKBOX_KEEP_UPDATER] = CreateWindowW(L"Button", L"在后台保持更新器运行", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
 		5, 150, 480, 18, state->hwnd[HWND_MAIN], (HMENU)HWND_CHECKBOX_KEEP_UPDATER, hMod, NULL);
 	if (state->background_updates) {
 		CheckDlgButton(state->hwnd[HWND_MAIN], HWND_CHECKBOX_KEEP_UPDATER, BST_CHECKED);
 	}
-	state->hwnd[HWND_STATIC_UPDATES_INTERVAL] = CreateWindowW(L"Static", L"Check for updates every                    minutes",
+	state->hwnd[HWND_STATIC_UPDATES_INTERVAL] = CreateWindowW(L"Static", L"每隔                    分钟检查一次更新",
 		WS_CHILD | WS_VISIBLE | (state->background_updates ? 0 : WS_DISABLED),
 		5, 168, 480, 18, state->hwnd[HWND_MAIN], (HMENU)HWND_STATIC_UPDATES_INTERVAL, hMod, NULL);
 	state->hwnd[HWND_EDIT_UPDATES_INTERVAL] = CreateWindowW(L"Edit", L"", WS_CHILD | WS_VISIBLE | ES_NUMBER | (state->background_updates ? 0 : WS_DISABLED),
@@ -395,12 +395,12 @@ DWORD WINAPI loader_update_window_create_and_run(LPVOID param)
 	SendMessage(state->hwnd[HWND_UPDOWN], UDM_SETBUDDY, (WPARAM)state->hwnd[HWND_EDIT_UPDATES_INTERVAL], 0);
 	SendMessage(state->hwnd[HWND_UPDOWN], UDM_SETPOS, 0, state->time_between_updates);
 	SendMessage(state->hwnd[HWND_UPDOWN], UDM_SETRANGE, 0, MAKELPARAM(UD_MAXVAL, 0));
-	state->hwnd[HWND_CHECKBOX_UPDATE_OTHERS] = CreateWindowW(L"Button", L"Update other games and patches", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
+	state->hwnd[HWND_CHECKBOX_UPDATE_OTHERS] = CreateWindowW(L"Button", L"更新其他游戏和补丁", WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
 		5, 195, 480, 18, state->hwnd[HWND_MAIN], (HMENU)HWND_CHECKBOX_UPDATE_OTHERS, hMod, NULL);
 	if (state->update_others) {
 		CheckDlgButton(state->hwnd[HWND_MAIN], HWND_CHECKBOX_UPDATE_OTHERS, BST_CHECKED);
 	}
-	state->hwnd[HWND_BUTTON_DISABLE_UPDATES] = CreateWindowW(L"Button", L"Completely disable updates (not recommended)", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+	state->hwnd[HWND_BUTTON_DISABLE_UPDATES] = CreateWindowW(L"Button", L"彻底禁用更新（不推荐）", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		5, 220, 480, 23, state->hwnd[HWND_MAIN], (HMENU)HWND_BUTTON_DISABLE_UPDATES, hMod, NULL);
 	state->hwnd[HWND_EDIT_LOGS] = CreateWindowW(L"Edit", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
 		5, 250, 480, 100, state->hwnd[HWND_MAIN], (HMENU)HWND_EDIT_LOGS, hMod, NULL);
@@ -439,7 +439,7 @@ DWORD WINAPI loader_update_window_create_and_run(LPVOID param)
 
 void loader_update_progress_init(loader_update_state_t *state, update_state_t new_state)
 {
-	SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"Downloading files list...");
+	SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"正在下载文件列表...");
 	progress_bar_set_marquee(state, true, true);
 	state->files_js_done = false;
 	state->state = new_state;
@@ -455,15 +455,15 @@ bool loader_update_progress_callback(progress_callback_status_t *status, void *p
     if (status->nb_files_total > 0 && state->files_js_done == false) {
         switch (state->state) {
             case STATE_CORE_UPDATE:
-		        SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"Updating core files...");
+	        SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"正在更新核心文件...");
                 break;
 
             case STATE_PATCHES_UPDATE:
-		        SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"Updating patch files...");
+	        SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"正在更新当前补丁文件...");
                 break;
 
             case STATE_GLOBAL_UPDATE:
-		        SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"Updating other patches and games...");
+	        SetWindowTextW(state->hwnd[HWND_LABEL_STATUS], L"正在更新其他补丁和游戏...");
                 break;
 
             case STATE_SELF:
@@ -717,7 +717,7 @@ BOOL loader_update_with_UI(const char *exe_fn, char *args)
 		state.game_started = true;
 		LeaveCriticalSection(&state.cs);
 
-		SetWindowTextW(state.hwnd[HWND_LABEL_STATUS], L"Waiting until the game exits...");
+		SetWindowTextW(state.hwnd[HWND_LABEL_STATUS], L"正在等待游戏退出...");
 		log_printf("'run_at_exit' setting is set. Running %s...\n", exe_fn);
 
 		std::wstring shared_mem_name = L"thcrap loader process list " + std::to_wstring(runconfig_loader_pid_get());
@@ -859,7 +859,7 @@ BOOL loader_update_with_UI(const char *exe_fn, char *args)
 
 				// Display the "Update finished" message
 				EnableWindow(state.hwnd[HWND_BUTTON_UPDATE], TRUE);
-				SetWindowTextW(state.hwnd[HWND_LABEL_STATUS], L"Update finished");
+				SetWindowTextW(state.hwnd[HWND_LABEL_STATUS], L"更新完成");
 				state.state = STATE_WAITING;
 				progress_bar_set_marquee(&state, false, true);
 				SendMessage(state.hwnd[HWND_PROGRESS], PBM_SETPOS, 100, 0);
@@ -869,7 +869,7 @@ BOOL loader_update_with_UI(const char *exe_fn, char *args)
 			}
 
 			if (!game && !game_id_other)
-				SetWindowTextW(state.hwnd[HWND_LABEL_STATUS], L"Waiting for game to open");
+				SetWindowTextW(state.hwnd[HWND_LABEL_STATUS], L"等待游戏启动");
 
 			wait_ret = WaitForMultipleObjects(3, handles, FALSE, time_between_updates * 60 * 1000);
 

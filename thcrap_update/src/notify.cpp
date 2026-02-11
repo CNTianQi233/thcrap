@@ -123,6 +123,10 @@ static const char self_sig_error[] =
 
 int update_notify_thcrap()
 {
+	// Chinese fork behavior:
+	// disable automatic self-update checks for new thcrap versions.
+	return SELF_NO_UPDATE;
+
 	const size_t SELF_MSG_SLOT = (size_t)self_body;
 	self_result_t ret = SELF_NO_UPDATE;
 	const char *thcrap_dir = runconfig_thcrap_dir_get();
@@ -178,4 +182,3 @@ int update_notify_thcrap()
 	
 	return ret;
 }
-

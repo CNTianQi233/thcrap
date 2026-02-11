@@ -10,14 +10,14 @@
 	<DockPanel>
 		<TextBlock x:Name="warnMessage" DockPanel.Dock="Bottom"
                    Margin="0" Foreground="Red"
-                   Text="WARNING: Automatic updates are turned OFF. Existing patches may be missing some files required for them to work."
+                   Text="警告：自动更新已关闭。现有补丁可能缺少运行所需文件。"
                    Visibility="Collapsed" FontWeight="Bold" TextWrapping="Wrap"/>
 
 		<TabControl SelectionChanged="TabChanged">
-			<TabItem Header="Language patches">
+			<TabItem Header="语言补丁">
 				<local:Page2_simple x:Name="Simple" Margin="6" />
 			</TabItem>
-			<TabItem Header="All patches" Name="tab_AllPatches">
+			<TabItem Header="全部补丁" Name="tab_AllPatches">
 				<local:Page2_advanced x:Name="Advanced" Margin="6" />
 			</TabItem>
 		</TabControl>

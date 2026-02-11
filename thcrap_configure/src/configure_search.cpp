@@ -25,13 +25,13 @@ static const game_search_result* ChooseLocation(game_search_result *locs, size_t
 
 	size_t num_versions = pos_end - pos_begin;
 	if(num_versions == 1) {
-		log_printf("Found %s (%s) at %s\n", locs[pos_begin].id, locs[pos_begin].description, locs[pos_begin].path);
+		log_printf("已找到 %s（%s）：%s\n", locs[pos_begin].id, locs[pos_begin].description, locs[pos_begin].path);
 
 		ret = &locs[pos_begin];
 	} else if(num_versions > 1) {
 		size_t loc_num;
 
-		log_printf("Found %zu versions of %s:\n\n", num_versions, id.c_str());
+		log_printf("找到 %zu 个 %s 的版本：\n\n", num_versions, id.c_str());
 
 		for (size_t i = 0; pos_begin + i < pos_end; i++) {
 			con_clickable(std::to_wstring(i + 1),
@@ -39,7 +39,7 @@ static const game_search_result* ChooseLocation(game_search_result *locs, size_t
 		}
 		putchar('\n');
 		do {
-			con_printf("Pick a version to run the patch on: (1 - %zu):\n", num_versions);
+			con_printf("请选择要应用补丁的版本（1 - %zu）：\n", num_versions);
 
 			if (swscanf(console_read().c_str(), L"%zu", &loc_num) != 1)
 				loc_num = 0;
@@ -212,7 +212,7 @@ json_t* ConfigureLocateGames(const char *games_js_path)
 
 	log_print(
 		"--------------\n"
-		"Locating games\n"
+		"定位游戏\n"
 		"--------------\n"
 		"\n"
 		"\n"
@@ -220,17 +220,17 @@ json_t* ConfigureLocateGames(const char *games_js_path)
 
 	games = json_load_file_report("config/games.js");
 	if(json_object_size(games) != 0) {
-		log_printf("You already have a %s with the following contents:\n\n", games_js_fn);
+		log_printf("你已有 %s，内容如下：\n\n", games_js_fn);
 		json_dump_log(games, JSON_INDENT(2) | JSON_SORT_KEYS);
 		log_print(
 			"\n"
 			"\n"
-			"Patch data will be downloaded or updated for all the games listed.\n"
+			"将为列表中的所有游戏下载或更新补丁数据。\n"
 			"\n"
 		);
-		con_clickable(L"a", L"\t* (A)dd new games to this list and keep existing ones?");
-		con_clickable(L"r", L"\t* Clear this list and (r)escan?");
-		con_clickable(L"k", L"\t* (K)eep this list and continue?");
+		con_clickable(L"a", L"\t* （A）保留现有条目并新增游戏？");
+		con_clickable(L"r", L"\t* 清空列表并（R）重新扫描？");
+		con_clickable(L"k", L"\t* （K）保持当前列表并继续？");
 		log_print("\n");
 		char ret = Ask<3>(nullptr, { 'a', 'r', 'k' | DEFAULT_ANSWER });
 		if(ret == 'k') {
@@ -241,34 +241,30 @@ json_t* ConfigureLocateGames(const char *games_js_path)
 	} else {
 		games = json_object();
 		log_printf(
-			"You don't have a %s yet.\n"
+			"你还没有 %s。\n"
 			"\n"
-			"Thus, I now need to search for patchable games installed on your system.\n"
-			"This only has to be done once - unless, of course, you later move the games\n"
-			"to different directories.\n"
+			"接下来需要搜索系统中可打补丁的游戏。\n"
+			"通常只需执行一次，除非你之后移动了游戏目录。\n"
 			"\n"
-			"Depending on the number of drives and your directory structure,\n"
-			"this may take a while. You can speed up this process by giving me a\n"
-			"common root path shared by all games you want to patch.\n"
+			"根据磁盘数量和目录结构，这一步可能耗时较长。\n"
+			"你可以提供一个游戏共用的根目录来加速搜索。\n"
 			"\n"
-			"For example, if you have 'Double Dealing Character' in \n"
+			"例如，如果你把《东方辉针城》放在：\n"
 			"\n"
 				"\tC:\\Games\\Touhou\\DDC\\\n"
 			"\n"
-			"and 'Imperishable Night' in\n"
+			"《东方永夜抄》放在：\n"
 			"\n"
 				"\tC:\\Games\\Touhou\\IN\\\n"
 			"\n"
-			"you would now specify \n"
+			"那么这里应填写：\n"
 			"\n"
 				"\tC:\\Games\\Touhou\\\n"
 			"\n"
-			"... unless, of course, your Touhou games are spread out all over your drives -\n"
-			"in which case there's no way around a complete search.\n"
+			"如果你的东方游戏分散在不同磁盘，就只能执行全盘搜索。\n"
 			"\n"
-			"Furthermore, please note that you may experience issues with\n"
-			"static English-patched versions of the games,\n"
-			"as such the originals are recommended.\n"
+			"另外，预先打过静态英文补丁的游戏可能会出现兼容问题，\n"
+			"建议尽量使用原版游戏。\n"
 			"\n"
 			"\n",
 			games_js_fn
@@ -287,7 +283,7 @@ json_t* ConfigureLocateGames(const char *games_js_path)
 		wchar_t search_path_w[MAX_PATH] = {0};
 		game_search_result *found = nullptr;
 
-		PIDLIST_ABSOLUTE pidl = SelectFolder(con_hwnd(), initial_path, L"Root path for game search (cancel to search entire system):");
+		PIDLIST_ABSOLUTE pidl = SelectFolder(con_hwnd(), initial_path, L"请选择游戏搜索根目录（取消则全盘搜索）：");
 		if (pidl && SHGetPathFromIDListW(pidl, search_path_w)) {
 			PathAddBackslashW(search_path_w);
 			CoTaskMemFree(pidl);
@@ -297,8 +293,8 @@ json_t* ConfigureLocateGames(const char *games_js_path)
 		repeat = false;
 		log_printf(
 			search_path[0]
-				? "Searching games in %s... this may take a while...\n\n"
-				: "Searching games on the entire system... this may take a while...\n\n",
+				? "正在 %s 中搜索游戏，可能需要一些时间...\n\n"
+				: "正在全盘搜索游戏，可能需要一些时间...\n\n",
 			search_path.c_str()
 		);
 		console_print_percent(-1);
@@ -326,7 +322,7 @@ json_t* ConfigureLocateGames(const char *games_js_path)
 			games_js_str = json_dumps(games, JSON_INDENT(2));
 			if(!file_write_text(games_js_fn, games_js_str)) {
 				log_printf(
-					"The following game locations have been identified and written to %s:\n"
+					"已识别到以下游戏路径，并写入 %s：\n"
 					"%s\n"
 					, games_js_fn
 					, games_js_str
@@ -336,17 +332,16 @@ json_t* ConfigureLocateGames(const char *games_js_path)
 			}
 			SAFE_FREE(games_js_str);
 		} else if(json_object_size(games) > 0) {
-			log_printf("No new game locations found.\n");
+			log_printf("未发现新的游戏路径。\n");
 		} else {
-			log_printf("No game locations found.\n");
+			log_printf("未找到任何游戏路径。\n");
 			if(search_path_w[0]) {
-				repeat = console_ask_yn("Search in a different directory?") == 'y';
+				repeat = console_ask_yn("要换一个目录继续搜索吗？") == 'y';
 			}
 			if(!repeat) {
 				log_printf(
-					"No patch shortcuts will be created.\n"
-					"Please re-run this configuration tool after you have acquired some games\n"
-					"supported by the patches.\n"
+					"将不会创建补丁快捷方式。\n"
+					"请在获得受支持的游戏后重新运行本配置工具。\n"
 				);
 				pause();
 			}

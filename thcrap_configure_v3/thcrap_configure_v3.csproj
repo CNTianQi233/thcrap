@@ -38,7 +38,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>$(SolutionDir)\gfx\abstractcactus\icon_01.ico</ApplicationIcon>
+    <ApplicationIcon>$(MSBuildProjectDirectory)\..\gfx\abstractcactus\icon_01.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -85,6 +85,9 @@
     <Compile Include="Page5.xaml.cs">
       <DependentUpon>Page5.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AboutChineseVersionWindow.xaml.cs">
+      <DependentUpon>AboutChineseVersionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -121,6 +124,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Page5.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AboutChineseVersionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

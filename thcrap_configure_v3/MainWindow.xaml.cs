@@ -55,7 +55,7 @@ namespace thcrap_configure_v3
             if (p != IntPtr.Zero)
             {
                 string version = ThcrapHelper.PtrToStringUTF8(p);
-                VersionText.Text = "Version " + version;
+                VersionText.Text = "版本 " + version;
             }
 
             string startUrl = null;
@@ -193,6 +193,15 @@ namespace thcrap_configure_v3
             {
                 this.Show();
             }
+        }
+
+        private void AboutChineseVersionWindow_Open(object sender, RoutedEventArgs e)
+        {
+            var aboutWindow = new AboutChineseVersionWindow
+            {
+                Owner = this
+            };
+            aboutWindow.ShowDialog();
         }
     }
 }

@@ -110,7 +110,7 @@ size_t AddPatch(patch_sel_stack_t& sel_stack, repo_t **repo_list, patch_desc_t s
 		if(!IsSelected(sel_stack, dep_sel)) {
 			std::string target_repo = SearchPatch(repo_list, sel.repo_id, dep_sel);
 			if(target_repo.empty()) {
-				log_printf("ERROR: Dependency '%s/%s' of patch '%s' not met!\n", dep_sel.repo_id, dep_sel.patch_id, sel.patch_id);
+				log_printf("错误：补丁 '%s' 的依赖 '%s/%s' 未满足！\n", sel.patch_id, dep_sel.repo_id, dep_sel.patch_id);
 				ret++;
 			} else {
 				free(dep_sel.repo_id);
@@ -182,8 +182,8 @@ size_t RepoPrintPatches(std::vector<patch_desc_t>& list_order, repo_t *repo, pat
 
 			if(print_header) {
                 con_printf(
-					"Patches from [%s] (%s):\n"
-					"\t(Contact: %s)\n"
+					"来自 [%s]（%s）的补丁：\n"
+					"\t（联系方式：%s）\n"
 					"\n", repo->title, repo->id, repo->contact
 				);
 				print_header = false;
@@ -217,7 +217,7 @@ size_t PrintSelStack(std::vector<patch_desc_t>& list_order, repo_t **repo_list, 
 	}
     con_printf(
 		"\n"
-		"Selected patches (in ascending order of priority):\n"
+		"已选补丁（优先级从低到高）：\n"
 		"\n"
 	);
 	for (patch_desc_t& sel : sel_stack) {
@@ -269,7 +269,7 @@ patch_sel_stack_t SelectPatchStack(repo_t **repo_list)
 	size_t patches_count = 0;
 
 	if(!repo_list[0]) {
-		log_print("\nNo repositories available -.-\n");
+		log_print("\n没有可用仓库。\n");
 		goto end;
 	}
 	// Sort patches
@@ -277,7 +277,7 @@ patch_sel_stack_t SelectPatchStack(repo_t **repo_list)
 		patches_count += repo_sort_patches(repo_list[i]);
 	}
 	if(patches_count == 0) {
-		log_print("\nNo patches available -.-\n");
+		log_print("\n没有可用补丁。\n");
 		goto end;
 	}
 
@@ -295,7 +295,7 @@ patch_sel_stack_t SelectPatchStack(repo_t **repo_list)
 
 		log_print(
 			"-----------------\n"
-			"Selecting patches\n"
+			"选择补丁\n"
 			"-----------------\n"
 			"\n"
 			"\n"
@@ -314,10 +314,10 @@ patch_sel_stack_t SelectPatchStack(repo_t **repo_list)
 			list_pick = 0;
 			if(stack_size) {
                 con_printf(
-					"(1 - %zu to add more, %zu - %zu to remove from the stack, ENTER to confirm):\n",
+					"（1 - %zu 添加，%zu - %zu 从栈中移除，按 ENTER 确认）：\n",
 					stack_offset, stack_offset + 1, list_count);
 			} else {
-				con_printf("Pick a patch (1 - %zu):\n", list_count);
+				con_printf("请选择补丁（1 - %zu）：\n", list_count);
 			}
 			std::wstring buf = console_read();
 			swscanf(buf.c_str(), L"%zu", &list_pick);
@@ -326,7 +326,7 @@ patch_sel_stack_t SelectPatchStack(repo_t **repo_list)
 
 		if(still_picking != 1) {
 			if(!stack_size) {
-                con_printf("\nPlease select at least one patch before continuing.\n");
+                con_printf("\n继续之前至少需要选择一个补丁。\n");
 				pause();
 				continue;
 			}
@@ -335,12 +335,12 @@ patch_sel_stack_t SelectPatchStack(repo_t **repo_list)
 		list_pick--;
 		patch_desc_t sel = list_order[list_pick];
 		if(list_pick < stack_offset) {
-			log_printf("Resolving dependencies for %s/%s...\n", sel.repo_id, sel.patch_id);
+			log_printf("正在解析 %s/%s 的依赖...\n", sel.repo_id, sel.patch_id);
 			size_t ret = AddPatch(sel_stack, repo_list, sel);
 			if(ret) {
 				log_printf(
 					"\n"
-					"%zu unmet dependencies. This configuration will most likely not work correctly!\n",
+					"%zu 个依赖未满足。该配置很可能无法正常工作！\n",
 					ret
 				);
 				pause();

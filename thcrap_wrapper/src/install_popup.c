@@ -110,7 +110,7 @@ HWND createInstallPopup(LPWSTR install_message)
 
 	hwnd = CreateWindow(
 		L"thcrap module install popup",
-		L"Touhou Community Reliant Automatic Patcher",
+		L"thcrap",
 		WS_POPUPWINDOW | WS_CAPTION,
 		x, y, w, h,
 		NULL, NULL, GetModuleHandle(NULL), install_message);
@@ -137,5 +137,5 @@ void errorCodeMsg(const wchar_t* msg, HWND hParent) {
 	p = my_strcpy(p, L"Error code: ");
 	p = my_strcpy(p, code_str);
 
-	MessageBoxW(hParent, full_msg, L"Error", MB_ICONERROR | MB_OK);
+	MessageBoxW(hParent, full_msg, L"错误", MB_ICONERROR | MB_OK);
 }

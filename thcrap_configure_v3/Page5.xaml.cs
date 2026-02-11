@@ -76,9 +76,9 @@ namespace thcrap_configure_v3
 
         private void NoShortcutsMoreDetails(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("With the way thcrap works, your game files are never modified, and running the games after setup program will still run the original, unpatched games.\n\n" +
-                            "If you want something more like traditional patches with a patched exe aside the original one in the game folder, choose to create the shortcuts \"in the games' folder\".",
-                            "More details regarding launching Touhou games with thcrap", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("按照 thcrap 的工作方式，游戏原文件不会被修改。完成配置后，直接运行游戏原始 exe 仍然是未打补丁状态。\n\n" +
+                            "如果你希望像传统补丁那样，在游戏目录中也能直接启动补丁版本，请选择在“游戏目录”创建快捷方式。",
+                            "关于使用 thcrap 启动游戏的说明", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void CreateShortcuts(string configName, IEnumerable<ThcrapDll.games_js_entry> games, ThcrapDll.ShortcutsDestination destination)

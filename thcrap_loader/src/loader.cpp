@@ -15,12 +15,9 @@
 #include <thcrap_update_wrapper.h>
 
 const char EXE_HELP[] =
-	"The executable can either be a game ID which is then looked up in "
-	"games.js, or simply the relative or absolute path to an .exe file.\n"
-	"It can either be given as a command line parameter, or through the "
-	"run configuration as a \"game\" value for a game ID or an \"exe\" "
-	"value for an .exe file path. If both are given, \"exe\" takes "
-	"precedence.";
+	"可执行文件参数既可以是游戏 ID（会在 games.js 中查找），也可以是 .exe 的相对或绝对路径。\n"
+	"你可以在命令行里直接传入，也可以在运行配置里用 \"game\"（游戏 ID）或 \"exe\"（可执行文件路径）指定。\n"
+	"如果两者都提供，则优先使用 \"exe\"。";
 
 const char *game_missing = NULL;
 size_t current_dir_len = 0;
@@ -60,9 +57,9 @@ json_t *load_config_from_file(const char *rel_start, json_t *run_cfg, const char
 		run_cfg_fn = strdup(config_path);
 	}
 
-	log_printf("Loading run configuration %s... ", run_cfg_fn);
+	log_printf("正在加载运行配置 %s... ", run_cfg_fn);
 	json_t *new_run_cfg = json_load_file_report(run_cfg_fn);
-	log_print(new_run_cfg != nullptr ? "found\n" : "not found\n");
+	log_print(new_run_cfg != nullptr ? "已找到\n" : "未找到\n");
 
 	if (!run_cfg) {
 		run_cfg = new_run_cfg;
@@ -77,9 +74,9 @@ json_t *load_config_from_file(const char *rel_start, json_t *run_cfg, const char
 
 json_t *load_config_from_string(json_t *run_cfg, const char *config_string)
 {
-	log_print("Loading run configuration from command-line... ");
+	log_print("正在从命令行加载运行配置... ");
 	json_t *new_run_cfg = json5_loadb(config_string, strlen(config_string), nullptr);
-	log_print(new_run_cfg != nullptr ? "success\n" : "error\n");
+	log_print(new_run_cfg != nullptr ? "成功\n" : "失败\n");
 
 	if (!run_cfg) {
 		run_cfg = new_run_cfg;
@@ -171,17 +168,17 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 
 	if(argc < 2) {
 		log_mboxf(NULL, MB_OK | MB_ICONINFORMATION,
-			"This is the command-line loader component of the %s.\n"
+			"这是 %s 的命令行加载器组件。\n"
 			"\n"
-			"You are probably looking for the configuration tool to set up shortcuts for the simple usage of the patcher - that would be thcrap_configure.\n"
+			"你可能要找的是配置工具，用它可以创建快捷方式来简化使用：thcrap_configure。\n"
 			"\n"
-			"If not, this is how to use the loader from the command line:\n"
+			"如果你确实要用命令行，请按下面格式运行：\n"
 			"\n"
 			"\tthcrap_loader runconfig.js executable\n"
 			"\n"
-			"- The run configuration file must end in .js to be recognized as such.\n"
+			"- 运行配置文件必须以 .js 结尾才会被识别。\n"
 			"- %s\n"
-			"- Also, later command-line parameters take priority over earlier ones.\n",
+			"- 当提供多个命令行参数时，后出现的参数优先级更高。\n",
 			PROJECT_NAME, EXE_HELP
 		);
 		ret = -1;
@@ -202,7 +199,7 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 	}
 
 	// Parse command line
-	log_print("Parsing command line...\n");
+	log_print("正在解析命令行...\n");
 	for(int i = 1; i < argc; i++) {
 		const char *arg = argv[i];
 		const char *param_ext = PathFindExtensionA(arg);
@@ -226,16 +223,16 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 	if(!run_cfg) {
 		if(run_cfg_fn.empty()) {
 			log_mbox(NULL, MB_OK | MB_ICONEXCLAMATION,
-				"No run configuration .js file given.\n"
-				"Proceeding with empty configuration.\n"
+				"未提供运行配置 .js 文件。\n"
+				"将继续使用空配置。\n"
 				"\n"
-				"If you do not have one yet, use the "
-				"thcrap_configure tool to create one.\n"
+				"如果你还没有配置文件，请先使用 "
+				"thcrap_configure 创建。\n"
 			);
 			run_cfg = json_object();
 		} else {
 			log_mboxf(NULL, MB_OK | MB_ICONEXCLAMATION,
-				"The run configuration file \"%s\" was not found.\n",
+				"未找到运行配置文件 \"%s\"。\n",
 				run_cfg_fn.c_str()
 			);
 
@@ -245,18 +242,18 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 	}
 	// Command-line arguments take precedence over run configuration values
 	final_exe_fn = cmd_exe_fn ? cmd_exe_fn : cfg_exe_fn;
-	log_printf("Using exe %s\n", final_exe_fn);
+	log_printf("使用可执行文件: %s\n", final_exe_fn);
 
 	// Still none?
 	if(!final_exe_fn) {
 		if(game_missing || !games_js) {
 			log_mboxf(NULL, MB_OK | MB_ICONEXCLAMATION,
-				"The game ID \"%s\" is missing in games.js.",
+				"games.js 中缺少游戏 ID \"%s\"。",
 				game_missing
 			);
 		} else {
 			log_mboxf(NULL, MB_OK | MB_ICONEXCLAMATION,
-				"No target executable given.\n\n%s", EXE_HELP
+				"未提供目标可执行文件。\n\n%s", EXE_HELP
 			);
 		}
 		ret = -3;
@@ -269,7 +266,7 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 		cmdline = strdup(temp_cmdline);
 	}
 
-	log_print("Command-line parsing finished\n");
+	log_print("命令行解析完成\n");
 	ret = loader_update_with_UI_wrapper(final_exe_fn, cmdline);
 end:
 	SAFE_FREE(cmdline);

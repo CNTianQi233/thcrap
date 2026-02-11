@@ -37,6 +37,7 @@
       <ModuleDefinitionFile>thcrap_tsa.def</ModuleDefinitionFile>
       <AdditionalDependencies>comctl32.lib;gdiplus.lib;shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies>thcrap$(Suffix).lib;libpng16$(Suffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/alternatename:INT123_synth_1to1_s32_s_x86_64_asm=INT123_synth_1to1_s32_x86_64_asm %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -14,16 +14,16 @@ int file_write_error(const char *fn)
 	static int error_nag = 0;
 	log_printf(
 		"\n"
-		"Error writing to %s!\n"
-		"You probably do not have the permission to write to the current directory,\n"
-		"or the file itself is write-protected.\n",
+		"写入 %s 失败！\n"
+		"你可能没有当前目录的写入权限，\n"
+		"或者该文件本身是只读的。\n",
 		fn
 	);
 	if (!error_nag) {
-		log_print("Writing is likely to fail for all further files as well.\n");
+		log_print("后续文件写入也很可能会继续失败。\n");
 		error_nag = 1;
 	}
-	return console_ask_yn("Continue configuration anyway?") == 'y';
+	return console_ask_yn("仍然继续配置吗？") == 'y';
 }
 
 int file_write_text(const char *fn, const char *str)
@@ -42,7 +42,7 @@ void self_restart()
 {
 	// Re-run an up-to-date configure process
 	LPSTR commandLine = GetCommandLine();
-	log_printf("Update found! Re-running %s\n", commandLine);
+	log_printf("发现更新！正在重新启动 %s\n", commandLine);
 
 	STARTUPINFOA sa;
 	PROCESS_INFORMATION pi;
@@ -95,8 +95,8 @@ std::string EnterRunCfgFN(std::string& run_cfg_fn)
 	do {
 		log_printf(
 			"\n"
-			"Enter a custom name for this configuration, or leave blank to use the default\n"
-			" (%s):\n", run_cfg_fn.c_str()
+			"请输入此配置的自定义名称，留空则使用默认值\n"
+			"（%s）：\n", run_cfg_fn.c_str()
 		);
 
 		std::wstring run_cfg_fn_new = console_read();
@@ -105,8 +105,8 @@ std::string EnterRunCfgFN(std::string& run_cfg_fn)
 
 		std::string run_cfg_fn_js = run_cfg_fn + ".js";
 		if (PathFileExists(run_cfg_fn_js.c_str())) {
-			log_printf("\"%s\" already exists. ", run_cfg_fn_js.c_str());
-			ret = console_ask_yn("Overwrite?") == 'n';
+			log_printf("\"%s\" 已存在。", run_cfg_fn_js.c_str());
+			ret = console_ask_yn("要覆盖吗？") == 'n';
 		} else {
 			ret = 0;
 		}
@@ -138,7 +138,7 @@ bool progress_callback(progress_callback_status_t *status, void *param)
                 file_time = now;
             }
             else if (now - file_time > 5s) {
-                log_printf("[%u/%u] %s: in progress (%ub/%ub)...\n", status->nb_files_downloaded, status->nb_files_total,
+                log_printf("[%u/%u] %s：下载中（%ub/%ub）...\n", status->nb_files_downloaded, status->nb_files_total,
                            status->url, status->file_progress, status->file_size);
                 file_time = now;
             }
@@ -155,13 +155,13 @@ bool progress_callback(progress_callback_status_t *status, void *param)
 			log_printf("%s: %s\n", status->url, status->error);
             return true;
         case GET_CRC32_ERROR:
-            log_printf("%s: CRC32 error\n", status->url);
+            log_printf("%s：CRC32 校验错误\n", status->url);
             return true;
         case GET_CANCELLED:
             // Another copy of the file have been downloader earlier. Ignore.
             return true;
         default:
-            log_printf("%s: unknown status\n", status->url);
+            log_printf("%s：未知状态\n", status->url);
             return true;
     }
 }
@@ -239,42 +239,39 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 	console_prepare_prompt();
 	log_print(_A(
 		"==========================================\n"
-		"Touhou Community Reliant Automatic Patcher - Patch configuration tool\n"
+		"thcrap - 补丁配置工具\n"
 		"==========================================\n"
 		"\n"
 		"\n"
-		"This tool will create a new patch configuration for the\n"
-		"Touhou Community Reliant Automatic Patcher.\n"
+		"本工具将为 thcrap 创建新的补丁配置。\n"
 		"\n"
 		"\n"
 	));
 	if (thcrap_update_module()) {
 		log_print(_A(
-			"The configuration process has four steps:\n"
+			"配置流程共四步：\n"
 			"\n"
-			"\t\t1. Selecting patches\n"
-			"\t\t2. Downloading game-independent data\n"
-			"\t\t3. Locating game installations\n"
-			"\t\t4. Downloading game-specific data\n"
+			"\t\t1. 选择补丁\n"
+			"\t\t2. 下载与游戏无关的基础数据\n"
+			"\t\t3. 定位游戏安装目录\n"
+			"\t\t4. 下载与游戏相关的数据\n"
 			"\n"
 			"\n"
 			"\n"
-			"You can specify a repository discovery URL as a command-line parameter.\n"
-			"Additionally, all patches from previously discovered repositories, stored in\n"
-			"subdirectories of the current directory, will be available for selection.\n")
+			"你可以在命令行参数中指定仓库发现 URL。\n"
+			"此外，当前目录子目录中已发现仓库的补丁也会加入可选列表。\n")
 		);
 	}
 	else {
 		log_print(_A(
-			"The configuration process has two steps:\n"
+			"当前配置流程共两步：\n"
 			"\n"
-			"\t\t1. Selecting patches\n"
-			"\t\t2. Locating game installations\n"
+			"\t\t1. 选择补丁\n"
+			"\t\t2. 定位游戏安装目录\n"
 			"\n"
 			"\n"
 			"\n"
-			"Updates are disabled. Therefore, patch selection is limited to the\n"
-			"repositories that are locally available.\n")
+			"更新功能已禁用，因此只能从本地可用仓库中选择补丁。\n")
 		);
 	}
 	log_print(
@@ -291,13 +288,13 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 	CreateDirectoryU("repos", NULL);
 	repo_list = RepoDiscover_wrapper(start_repo);
 	if (!repo_list || !repo_list[0]) {
-		log_print(_A("No patch repositories available...\n"));
+		log_print(_A("没有可用的补丁仓库。\n"));
 		pause();
 		goto end;
 	}
 	sel_stack = SelectPatchStack(repo_list);
 	if (!sel_stack.empty()) {
-		log_print(_A("Downloading game-independent data...\n"));
+		log_print(_A("正在下载基础数据（与游戏无关）...\n"));
 		stack_update_wrapper(update_filter_global_wrapper, NULL, progress_callback, &state);
 		state.files.clear();
 
@@ -324,7 +321,7 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 	CreateDirectoryU("config", NULL);
 	run_cfg_str = json_dumps(new_cfg, JSON_INDENT(2) | JSON_SORT_KEYS);
 	if (!file_write_text(run_cfg_fn_js.c_str(), run_cfg_str)) {
-		log_printf(_A("\n\nThe following run configuration has been written to %s:\n"), run_cfg_fn_js.c_str());
+		log_printf(_A("\n\n已将以下运行配置写入 %s：\n"), run_cfg_fn_js.c_str());
 		log_print(run_cfg_str);
 		log_print("\n\n");
 		pause();
@@ -339,7 +336,7 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 		goto end;
 	}
 
-	if (console_ask_yn(_A("Create shortcuts? (required for first run)")) != 'n') {
+	if (console_ask_yn(_A("要创建快捷方式吗？（首次运行必需）")) != 'n') {
 		gamesArray = games_js_to_array(games);
 		if (CreateShortcuts(run_cfg_fn.c_str(), gamesArray, SHDESTINATION_THCRAP_DIR, SHTYPE_AUTO) != 0) {
 			goto end;
@@ -348,7 +345,7 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 
 	{
 		char **filter = games_json_to_array(games);
-		log_print(_A("\nDownloading data specific to the located games...\n"));
+		log_print(_A("\n正在下载已定位游戏的专用数据...\n"));
 		stack_update_wrapper(update_filter_games_wrapper, filter, progress_callback, &state);
 		state.files.clear();
 		strings_array_free(filter);
@@ -356,14 +353,14 @@ int TH_CDECL win32_utf8_main(int argc, const char *argv[])
 	log_printf(_A(
 		"\n"
 		"\n"
-		"Done.\n"
+		"完成。\n"
 		"\n"
-		"You can now start the respective games with your selected configuration\n"
-		"through the shortcuts created in the current directory\n"
-		"(%s).\n"
+		"你现在可以通过当前目录中创建的快捷方式，\n"
+		"使用所选配置启动对应游戏：\n"
+		"(%s)\n"
 		"\n"
-		"These shortcuts work from anywhere, so feel free to move them wherever you like.\n"
-		"Alternatively, if you find yourself drowned in shortcuts, you should try this tool:\n"
+		"这些快捷方式可在任意位置使用，你可以按需移动。\n"
+		"如果快捷方式太多，也可以试试这个工具：\n"
 		"https://github.com/thpatch/Universal-THCRAP-Launcher/releases\n"
 		"\n"), cur_dir
 	);

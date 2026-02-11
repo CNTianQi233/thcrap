@@ -91,29 +91,28 @@ static void NETShowWineError(WineNetError_t reason) {
 	switch (reason) {
 	case n_MonoInstalled:
 		wineMessage =
-			L"It seems you are using Wine and Wine Mono is installed\n"
-			L"Unfortunately, Wine Mono does not work with thcrap\n"
-			L"Please use the bundled script to install .NET Framework 4.8.0\n"
-			L"(the script is located in the \"bin/scripts\" folder and called \"install_dotnet480.sh\")";
+			L"检测到你正在使用 Wine，并且已安装 Wine Mono。\n"
+			L"很遗憾，Wine Mono 与 thcrap 不兼容。\n"
+			L"请使用随附脚本安装 .NET Framework 4.8.0。\n"
+			L"（脚本位于 \"bin/scripts\" 目录，文件名为 \"install_dotnet480.sh\"）";
 		break;
 	case n_NotInstalled:
 		wineMessage =
-			L"It seems you are using Wine and .NET Framework 4.8.0 is not installed\n"
-			L".NET Framework 4.8.0 or higher is required to setup thcrap\n"
-			L"Please use the bundled script to install .NET Framework 4.8.0\n"
-			L"(the script is located in the \"bin/scripts\" folder and called \"install_dotnet480.sh\")";
+			L"检测到你正在使用 Wine，但未安装 .NET Framework 4.8.0。\n"
+			L"初始化 thcrap 需要 .NET Framework 4.8.0 或更高版本。\n"
+			L"请使用随附脚本安装 .NET Framework 4.8.0。\n"
+			L"（脚本位于 \"bin/scripts\" 目录，文件名为 \"install_dotnet480.sh\"）";
 		break;
 	case n_OutOfDate:
 		wineMessage =
-			L"It seems you are using Wine and .NET Framework is installed\n"
-			L"Unfortunately, the installed version is older than 4.8.0\n"
-			L"Please create a new wineprefix and use the bundled script\n"
-			L"to install .NET Framework 4.8.0\n"
-			L"(the script is located in the \"bin/scripts\" folder and called \"install_dotnet480.sh\")";
+			L"检测到你正在使用 Wine，且已安装 .NET Framework。\n"
+			L"但当前版本低于 4.8.0，无法满足要求。\n"
+			L"请新建一个 wineprefix，并使用随附脚本安装 .NET Framework 4.8.0。\n"
+			L"（脚本位于 \"bin/scripts\" 目录，文件名为 \"install_dotnet480.sh\"）";
 		break;
 	}
 
-	MessageBoxW(NULL, wineMessage, L"Touhou Community Reliant Automatic Patcher", MB_ICONERROR | MB_OK);
+	MessageBoxW(NULL, wineMessage, L"thcrap", MB_ICONERROR | MB_OK);
 }
 
 static InstallStatus_t CheckDotNETStatus(bool isWine) {
@@ -222,31 +221,31 @@ int NETDownloadCheckError(HttpStatus reason) {
 		return 0;
 	case HttpLibLoadError:
 		errorMessage =
-			L"Failed to download .NET Framework 4.8.0\n"
-			L"Corrupt or outdated thcrap installation";
+			L".NET Framework 4.8.0 下载失败。\n"
+			L"thcrap 安装可能已损坏或版本过旧。";
 		break;
 	case HttpCancelled:
 		errorMessage =
-			L"Failed to download .NET Framework 4.8.0\n"
-			L"An error occurred with the download process";
+			L".NET Framework 4.8.0 下载失败。\n"
+			L"下载过程中发生错误。";
 		break;
 	case HttpClientError:
 		errorMessage =
-			L"Failed to download .NET Framework 4.8.0\n"
-			L"The file wasn't found on Microsoft's server";
+			L".NET Framework 4.8.0 下载失败。\n"
+			L"在微软服务器上找不到该文件。";
 		break;
 	case HttpServerError:
 		errorMessage =
-			L"Failed to download .NET Framework 4.8.0\n"
-			L"An unknown error ocurred with Microsoft's server";
+			L".NET Framework 4.8.0 下载失败。\n"
+			L"微软服务器发生未知错误。";
 		break;
 	case HttpSystemError:
 		errorMessage =
-			L"Failed to download .NET Framework 4.8.0\n"
-			L"No internet or not enough system memory";
+			L".NET Framework 4.8.0 下载失败。\n"
+			L"可能是网络不可用，或系统内存不足。";
 		break;
 	}
-	MessageBoxW(NULL, errorMessage, L"Touhou Community Reliant Automatic Patcher", MB_ICONERROR | MB_OK);
+	MessageBoxW(NULL, errorMessage, L"thcrap", MB_ICONERROR | MB_OK);
 	return 1;
 }
 
@@ -264,14 +263,14 @@ int installDotNET(LPWSTR ApplicationPath) {
 			NETShowWineError(n_NotInstalled);
 			return 1;
 		}
-		net_install_message = L"Installing some required files, please wait...";
+		net_install_message = L"正在安装必需组件，请稍候...";
 		break;
 	case NeedsUpdate:
 		if (isWine) {
 			NETShowWineError(n_OutOfDate);
 			return 1;
 		}
-		net_install_message = L"Updating some required files, please wait...";
+		net_install_message = L"正在更新必需组件，请稍候...";
 		break;
 	case IsNotInstallable:
 		return 1;
@@ -288,27 +287,25 @@ int installDotNET(LPWSTR ApplicationPath) {
 		winver.dwOSVersionInfoSize = sizeof(winver);
 		RtlGetVersion(&winver);
 		if (winver.dwMajorVersion < 6) {
-			MessageBoxW(NULL, L"Your Windows version is too old for .NET 4.8.0", L".Touhou Community Reliant Automatic Patcher", MB_ICONERROR | MB_OK);
+			MessageBoxW(NULL, L"你的 Windows 版本过旧，无法安装 .NET 4.8.0。", L"thcrap", MB_ICONERROR | MB_OK);
 			return 1;
 		}
 	}
 	else {
-		if (MessageBoxW(NULL, L"Couldn't determine Windows version. Proceed anyways?", L"Touhou Community Reliant Automatic Patcher", MB_ICONWARNING | MB_YESNO) != IDYES)
+		if (MessageBoxW(NULL, L"无法确定 Windows 版本。仍要继续吗？", L"thcrap", MB_ICONWARNING | MB_YESNO) != IDYES)
 			return 1;
 	}
 
 	MessageBoxW(NULL,
-		L"We will now download some required files\n"
-		L"Should your internet go out, the download\n"
-		L"will pause and resume once you have internet.\n\n"
+		L"现在将下载一些必需组件。\n"
+		L"如果网络中断，下载会暂停，网络恢复后会继续。\n\n"
 
-		L"If your internet goes out and you are certain,\n"
-		L"you won't reconnect for a long period of time, you\n"
-		L"can use Task Manager to force close this process",
-	L"Touhou Community Reliant Automatic Patcher", MB_ICONINFORMATION | MB_OK); 
+		L"如果你确认长时间无法联网，\n"
+		L"可以使用任务管理器强制结束此进程。",
+	L"thcrap", MB_ICONINFORMATION | MB_OK);
 
 	HANDLE hThread = CreateThread(NULL, 0, NETDownloadThread, ApplicationPath, 0, NULL);
-	HWND hwnd = createInstallPopup(L"Downloading some required files");
+	HWND hwnd = createInstallPopup(L"正在下载必需组件");
 
 	MSG msg;
 	my_memset(&msg, 0, sizeof(msg));
@@ -329,7 +326,7 @@ int installDotNET(LPWSTR ApplicationPath) {
 			DestroyWindow(hwnd);
 			BOOL ret = GetExitCodeThread(hThread, &threadExitCode);
 			if (!ret) {
-				errorCodeMsg(L"An unknown error with the download thread occurred\n", NULL);
+				errorCodeMsg(L"下载线程发生未知错误。\n", NULL);
 			}
 			CloseHandle(hThread);
 			if (NETDownloadCheckError(threadExitCode)) {
@@ -398,10 +395,10 @@ void installCrt(LPWSTR ApplicationPath)
 		case IsCurrent:
 			return;
 		case NotInstalled:
-			crt_install_message = L"Installing some required files, please wait...";
+			crt_install_message = L"正在安装必需组件，请稍候...";
 			break;
 		case NeedsUpdate:
-			crt_install_message = L"Updating some required files, please wait...";
+			crt_install_message = L"正在更新必需组件，请稍候...";
 			break;
 	}
 

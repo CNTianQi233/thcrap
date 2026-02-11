@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#define THCRAP_CORRUPTED_MSG "You thcrap installation may be corrupted. You can try to redownload it from https://www.thpatch.net/wiki/Touhou_Patch_Center:Download"
+#define THCRAP_CORRUPTED_MSG "你的 thcrap 安装可能已损坏。你可以从 https://www.thpatch.net/wiki/Touhou_Patch_Center:Download 重新下载。"
 
 static bool do_move(std::vector<std::string>& logs, const char* src, const char* dst);
 
@@ -25,7 +25,7 @@ static bool create_directory_for_path(std::vector<std::string>& logs, const char
 		// CreateDirectoryU will create the parent directories if they don't exist.
 		if (!CreateDirectoryU(dir, nullptr)) {
 			logs.push_back(std::string("[update] Creating directory ") + dir + " failed: " + std::to_string(GetLastError()));
-			log_mboxf(nullptr, MB_OK, "Update: failed to create directory '%s': %s.\n"
+			log_mboxf(nullptr, MB_OK, "更新失败：无法创建目录 '%s'：%s。\n"
 				THCRAP_CORRUPTED_MSG, dir, lasterror_str());
 			return false;
 		}
@@ -166,7 +166,7 @@ static bool do_move_file(std::vector<std::string>& logs, const char *src, const 
 
 	if (!MoveFileExU(src, dst, MOVEFILE_REPLACE_EXISTING)) {
 		logs.push_back(std::string("[update] Moving ") + src + " to " + dst + " failed: " + std::to_string(GetLastError()));
-		log_mboxf(nullptr, MB_OK, "Update: failed to move '%s' to '%s': %s.\n"
+		log_mboxf(nullptr, MB_OK, "更新失败：无法将 '%s' 移动到 '%s'：%s。\n"
 			THCRAP_CORRUPTED_MSG, src, dst, lasterror_str());
 		return false;
 	}
@@ -193,7 +193,7 @@ static bool do_move(std::vector<std::string>& logs, const char *src, const char 
 				return true;
 			} else {
 				logs.push_back(std::string("[update] FindFirstFileU(") + src + ") failed: " + std::to_string(GetLastError()));
-				log_mboxf(nullptr, MB_OK, "Update: failed to prepare the move of '%s': %s.\n"
+				log_mboxf(nullptr, MB_OK, "更新失败：无法准备移动 '%s'：%s。\n"
 					THCRAP_CORRUPTED_MSG, src, lasterror_str());
 				return false;
 			}
@@ -348,7 +348,7 @@ static bool do_update(std::vector<std::string>& logs, json_t *update)
 		const char *new_path = json_object_get_string(update_repo_paths, "new_path");
 		if (!cfg_files || !old_path || !new_path) {
 			logs.push_back("[update] update_repo_paths is missing one or more parameters.");
-			log_mbox(nullptr, MB_OK, "\"update_repo_paths\" is missing one or more parameters!\n"
+			log_mbox(nullptr, MB_OK, "\"update_repo_paths\" 缺少一个或多个参数！\n"
 				THCRAP_CORRUPTED_MSG);
 			return false;
 		}
@@ -365,7 +365,7 @@ static bool do_update(std::vector<std::string>& logs, json_t *update)
 		const char *broken_prefix = json_object_get_string(fix_repo_paths_post_restructuring, "broken_prefix");
 		if (!cfg_files || !broken_prefix) {
 			logs.push_back("[update] fix_repo_paths_post_restructuring is missing one or more parameters.");
-			log_mbox(nullptr, MB_OK, "\"fix_repo_paths_post_restructuring\" is missing one or more parameters!\n"
+			log_mbox(nullptr, MB_OK, "\"fix_repo_paths_post_restructuring\" 缺少一个或多个参数！\n"
 				THCRAP_CORRUPTED_MSG);
 			return false;
 		}
@@ -432,7 +432,7 @@ bool update_finalize(std::vector<std::string>& logs)
 
 	if (!json_is_array(update_list)) {
 		logs.push_back("[update] bin\\update.json is not an array.");
-		log_mbox(nullptr, MB_OK, "Error: bin\\update.json is not an array.\n"
+		log_mbox(nullptr, MB_OK, "错误：bin\\update.json 不是数组。\n"
 			THCRAP_CORRUPTED_MSG);
 		json_decref(update_list);
 		return false;
@@ -443,7 +443,7 @@ bool update_finalize(std::vector<std::string>& logs)
 		logs.push_back("[update] Running update " + std::to_string(i) + "...");
 		if (do_update(logs, update) == false) {
 			logs.push_back("[update] Update " + std::to_string(i) + " failed");
-			log_mbox(nullptr, MB_OK, "An error happened while finalizing the thcrap update!\n"
+			log_mbox(nullptr, MB_OK, "在完成 thcrap 更新收尾步骤时发生错误！\n"
 				THCRAP_CORRUPTED_MSG);
 			json_decref(update_list);
 			return false;

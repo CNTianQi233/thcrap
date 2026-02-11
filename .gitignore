@@ -233,3 +233,17 @@ docs/_build/
 
 # i18n configuration
 i18n/config.json
+
+# -----------------------------
+# thcrap local release artifacts
+# -----------------------------
+tmp_*/
+thcrap/
+thcrap_test/
+thcrap_test_upgrade/
+thcrap.zip
+thcrap.zip.sig
+thcrap_symbols.zip
+thcrap_github.zip
+thcrap_github.zip.sig
+commit_github.txt

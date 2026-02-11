@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="460" d:DesignWidth="800">
     <StackPanel>
-        <TextBlock Text="Please wait..." />
+        <TextBlock Text="请稍候..." />
         <TextBlock Name="Status" />
         <ProgressBar Name="Progress" Height="17px" IsIndeterminate="True" />
     </StackPanel>

@@ -499,7 +499,7 @@ INT_PTR ConsoleDialog::dialogProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		return TRUE;
 	}
 	case WM_CLOSE:
-		if (con_can_close || MessageBoxW(hWnd, L"Patch configuration is not finished.\n\nQuit anyway?", L"Touhou Community Reliant Automatic Patcher", MB_YESNO | MB_ICONWARNING) == IDYES) {
+		if (con_can_close || MessageBoxW(hWnd, L"补丁配置尚未完成。\n\n仍要退出吗？", L"thcrap", MB_YESNO | MB_ICONWARNING) == IDYES) {
 			EndDialog(hWnd, 0);
 		}
 		return TRUE;
@@ -617,7 +617,7 @@ void cls(SHORT top) {
 }
 void pause(void) {
 	dontUpdate = false;
-	con_printf("Press ENTER to continue . . .\n"); // this will ReadQueue and Update for us
+	con_printf("按 ENTER 继续...\n"); // this will ReadQueue and Update for us
 	g_console->pause().get();
 }
 void console_prepare_prompt(void) {

@@ -5,35 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:thcrap_configure_v3"
         mc:Ignorable="d"
-        Title="thcrap Settings" Height="460" Width="800"
+        Title="thcrap 设置" Height="460" Width="800"
         Loaded="WindowOpened">
     <Grid Margin="10,0,0,0">
         <StackPanel>
             <StackPanel>
-                <Label Content="Updating"/>
-				<CheckBox Name="auto_updates" Content="Toggle automatic updates"/>
-                <CheckBox Name="background_updates" Content="Enable background updates when a game is running" Checked="BackgroundUpdates_Checked" Unchecked="BackgroundUpdates_Unchecked"/>
-                <CheckBox Name="update_at_exit" Content="Update game files after the game exits"/>
-                <CheckBox Name="update_others" Content="Update other games" IsEnabled="False"/>
+                <Label Content="更新"/>
+				<CheckBox Name="auto_updates" Content="启用自动更新"/>
+                <CheckBox Name="background_updates" Content="游戏运行时启用后台更新" Checked="BackgroundUpdates_Checked" Unchecked="BackgroundUpdates_Unchecked"/>
+                <CheckBox Name="update_at_exit" Content="游戏退出后更新文件"/>
+                <CheckBox Name="update_others" Content="更新其他游戏" IsEnabled="False"/>
                 <Grid Margin="0,5,0,0" IsEnabled="False" Name="time_between_updates_grid">
                     <TextBox PreviewTextInput="NumericTextbox" Name="time_between_updates" Width="30" HorizontalAlignment="Left" Margin="1,0,0,0"/>
-                    <Label Padding="0" HorizontalAlignment="Left" Content="Time between updates (in minutes)" Margin="36,0,0,0" />
+                    <Label Padding="0" HorizontalAlignment="Left" Content="更新间隔（分钟）" Margin="36,0,0,0" />
                 </Grid>
             </StackPanel>
 
             <StackPanel Margin="0,10,0,0">
-                <Label Content="Advanced" />
-                <CheckBox Name="developer_mode" Content="Developer mode"/>
-                <CheckBox Name="console" Content="Enable the log console"/>
-                <CheckBox Name="use_wininet" Content="Use WinInet"/>
+                <Label Content="高级" />
+                <CheckBox Name="developer_mode" Content="开发者模式"/>
+                <CheckBox Name="console" Content="启用日志控制台"/>
+                <CheckBox Name="use_wininet" Content="使用 WinInet"/>
                 <Grid Margin="0,5,0,0">
                     <TextBox PreviewTextInput="NumericTextbox" Name="codepage" Width="30" HorizontalAlignment="Left" Margin="1,0,0,0"/>
-                    <Label Padding="0" HorizontalAlignment="Left" Content="Fallback codepage" Margin="36,0,0,0" />
+                    <Label Padding="0" HorizontalAlignment="Left" Content="备用代码页" Margin="36,0,0,0" />
                 </Grid>
             </StackPanel>
 
             <StackPanel Margin="0,10,0,0">
-                <Label Content="Exception Detail" />
+                <Label Content="异常详情" />
                 <Grid Margin="0,0,0,5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -42,25 +42,25 @@
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" Click="ExceptionSetDefault" Content="Default" />
-                    <Button Grid.Column="1" Click="ExceptionSetEnchanced" Content="Enhanced" />
-                    <Button Grid.Column="2" Click="ExceptionSetFull" Content="Full" />
+                    <Button Grid.Column="0" Click="ExceptionSetDefault" Content="默认" />
+                    <Button Grid.Column="1" Click="ExceptionSetEnchanced" Content="增强" />
+                    <Button Grid.Column="2" Click="ExceptionSetFull" Content="完整" />
                 </Grid>
                 <StackPanel Margin="20,0,0,0">
-                    <CheckBox Name="ExceptionDetailBasic" Content="Basic" />
+                    <CheckBox Name="ExceptionDetailBasic" Content="基础" />
                     <CheckBox Name="ExceptionDetailFPU" Content="FPU" />
                     <CheckBox Name="ExceptionDetailSSE" Content="SSE" />
-                    <CheckBox Name="ExceptionDetailSegments" Content="Segments" />
-                    <CheckBox Name="ExceptionDetailDebug" Content="Debug" />
-                    <CheckBox Name="ExceptionDetailManualTrace" Content="ManualTrace" />
-                    <CheckBox Name="ExceptionDetailTraceDump" Content="TraceDump" />
-                    <CheckBox Name="ExceptionDetailExtra" Content="Extra" />
+                    <CheckBox Name="ExceptionDetailSegments" Content="段寄存器" />
+                    <CheckBox Name="ExceptionDetailDebug" Content="调试" />
+                    <CheckBox Name="ExceptionDetailManualTrace" Content="手动跟踪" />
+                    <CheckBox Name="ExceptionDetailTraceDump" Content="跟踪转储" />
+                    <CheckBox Name="ExceptionDetailExtra" Content="扩展" />
                 </StackPanel>
             </StackPanel>
         </StackPanel>
         <Grid VerticalAlignment="Bottom" Margin="0,0,10,10">
-            <Button Click="Settings_Save" Width="50" HorizontalAlignment="Right" Content="Save" />
-            <Button Click="Settings_Cancel" Width="50" HorizontalAlignment="Right" Content="Cancel" Margin="0,0,60,0" />
+            <Button Click="Settings_Save" Width="50" HorizontalAlignment="Right" Content="保存" />
+            <Button Click="Settings_Cancel" Width="50" HorizontalAlignment="Right" Content="取消" Margin="0,0,60,0" />
         </Grid>
     </Grid>
 </Window>

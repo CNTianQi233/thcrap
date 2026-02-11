@@ -13,7 +13,10 @@ WINDRES = x86_64-w64-mingw32-windres
 endif
 
 CFLAGS =  -DBUILDER_NAME_W=L\"$(USER)\"
-CFLAGS += -DPROJECT_VERSION_Y=9999 -DPROJECT_VERSION_M=99 -DPROJECT_VERSION_D=99 '-DDISCOVERY_DEFAULT_REPO="https://srv.thpatch.net/"'
+PROJECT_VERSION_Y ?= $(shell date +%Y)
+PROJECT_VERSION_M ?= $(shell date +%m)
+PROJECT_VERSION_D ?= $(shell date +%d)
+CFLAGS += -DPROJECT_VERSION_Y=$(PROJECT_VERSION_Y) -DPROJECT_VERSION_M=$(PROJECT_VERSION_M) -DPROJECT_VERSION_D=$(PROJECT_VERSION_D) '-DDISCOVERY_DEFAULT_REPO="https://srv.thpatch.net/"'
 CFLAGS += -municode
 CFLAGS += -mfpmath=sse -msse4.1 -msha -mlong-double-80
 # -mpreferred-stack-boundary=2 is broken on i686-w64-mingw32-g++ (GCC) 12.2.0
